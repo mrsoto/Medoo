@@ -187,7 +187,7 @@ class medoo
 
 		foreach ($columns as $key => $value)
 		{
-			preg_match('/([a-zA-Z0-9_\-\.]*)\s*\(([a-zA-Z0-9_\-]*)\)/i', $value, $match);
+			preg_match('/^\s*([a-zA-Z0-9_\-\.]*)\s*\(([a-zA-Z0-9_\-]*)\)\s*$/i', $value, $match);
 
 			if (isset($match[1], $match[2]))
 			{
@@ -195,7 +195,13 @@ class medoo
 			}
 			else
 			{
-				array_push($stack, $this->column_quote( $value ));
+				preg_match('/\s*\[([a-zA-Z0-9_\-\.]+)\]\s*\(([a-zA-Z0-9_\-]*)\)\s/i', $value, $match);
+		                if (isset($match[1], $match[2]))
+		                {
+		                	array_push($stack,  $match[1].'(*)' . ' AS ' . $this->column_quote( $match[2] ));    
+		                } else {
+					array_push($stack, $this->column_quote( $value ));
+				}
 			}
 		}
 
